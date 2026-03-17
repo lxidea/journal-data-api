@@ -34,8 +34,8 @@ async def search(
     return result.model_dump()
 
 
-@app.get("/api/paper/{doi:path}")
-async def get_paper(doi: str):
+@app.get("/api/metadata")
+async def get_paper(doi: str = Query(..., description="DOI, e.g. 10.1038/nature12373")):
     """Get paper metadata by DOI."""
     result = await resolver.get_metadata(doi)
     if not result:
@@ -43,8 +43,8 @@ async def get_paper(doi: str):
     return result.model_dump(exclude={"fulltext", "pdf_base64"})
 
 
-@app.get("/api/paper/{doi:path}/fulltext")
-async def get_fulltext(doi: str):
+@app.get("/api/fulltext")
+async def get_fulltext(doi: str = Query(..., description="DOI")):
     """Get paper full text (extracted from PDF)."""
     result = await resolver.get_fulltext(doi)
     if not result:
@@ -52,8 +52,8 @@ async def get_fulltext(doi: str):
     return result.model_dump(exclude={"pdf_base64"})
 
 
-@app.get("/api/paper/{doi:path}/pdf")
-async def get_pdf(doi: str):
+@app.get("/api/pdf")
+async def get_pdf(doi: str = Query(..., description="DOI")):
     """Get paper PDF as base64."""
     result = await resolver.get_pdf_result(doi)
     if not result or not result.pdf_base64:
